@@ -1,0 +1,24 @@
+# Generated files
+/target
+**/*.rs.bk
+Cargo.lock
+.DS_Store
+
+# Local submission folder (DO NOT PUSH TO GITHUB)
+/submission
+
+# Local config
+/.cargo
+
+# Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Binary artifacts
+*.exe
+*.dll
+*.so
+*.dylib
+artifacts/
