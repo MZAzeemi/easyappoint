@@ -1,1 +1,0 @@
-/home/mehboob/Downloads/appointment-scheduler-rust/target/aarch64-unknown-linux-gnu/release/easyappoint: /home/mehboob/Downloads/appointment-scheduler-rust/src/calendar.rs /home/mehboob/Downloads/appointment-scheduler-rust/src/main.rs /home/mehboob/Downloads/appointment-scheduler-rust/src/models.rs /home/mehboob/Downloads/appointment-scheduler-rust/src/scheduler.rs
