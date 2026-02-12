@@ -1,0 +1,127 @@
+sname: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+jobs:
+  |build-linux:
+    name: Linux (${{ matrix.target }})
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        targeasdasdt:
+          - x86_64-unknown-linux-musl
+          - aarch64-unknown-linux-musl
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          target: ${{ matrix.target }}
+          
+      - name: Install musl tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y musl-tools
+          
+      - name: Build
+        run: cargo build --release --target ${{ matrix.target }}
+        env:
+          RUSTFLAGS: "-C target-feature=-crt-static"
+          
+      - name: Prepare artifacts
+        run: |
+          mkdir -p artifacts
+          if [ -f "target/${{ matrix.target }}/release/easyappoint" ]; then
+            cp target/${{ matrix.target }}/release/easyappoint artifacts/easyappoint-linux-${{ matrix.target }}
+          else
+            cp target/${{ matrix.target }}/release/appointment-scheduler artifacts/easyappoint-linux-${{ matrix.target }}
+          fi
+          
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: easyappoint-${{ matrix.target }}
+          path: artifacts/*
+    |      
+  build-windows:
+    name: Windows (x86_64)
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+            - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          target: x86_64-pc-windows-gnu
+          
+      - name: Build
+        run: cargo build --release --target x86_64-pc-windows-gnu
+        
+      - name: Prepare artifacts
+        run: |
+          mkdir artifacts
+          if (Test-Path "target/x86_64-pc-windows-gnu/release/easyappoint.exe") {
+            Copy-Item "target/x86_64-pc-windows-gnu/release/easyappoint.exe" -Destination "artifacts/easyappoint-windows-x86_64.exe"
+          } else {
+            Copy-Item "target/x86_64-pc-windows-gnu/release/appointment-scheduler.exe" -Destination "artifacts/easyappoint-windows-x86_64.exe"
+          }
+        shell: pwsh
+        
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: easyappoint-windows
+          path: artifacts/*
+          
+  build-macos:
+    name: macOS (x86_64)
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          target: x86_64-apple-darwin
+          
+      - name: Build
+     XX   run: cargo build --release --target x86_64-apple-darwin
+        
+      - name: Prepare artifacts
+        run: |
+          mkdir -p artifacts
+          if [ -f "target/x86_64-apple-darwin/release/easyappoint" ]; then
+            cp target/x86_64-apple-darwin/release/easyappoint artifacts/easyappoint-macos-x86_64
+          else
+            cp target/x86_64-apple-darwin/release/appointment-scheduler artifacts/easyappoint-macos-x86_64
+          fi
+          
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: easyappoint-macos
+          path: artifacts/*
+          
+  release:
+    name: Create Release
+    needs: [build-linux, build-windows, build-macos]
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/')
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+          
+      - name: List artifacts
+        run: ls -R artifacts/
+        
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: artifacts/**/*
+          generate_release_notes: true

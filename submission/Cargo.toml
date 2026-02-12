@@ -1,0 +1,15 @@
+[package]
+name = "easyappoint"
+version = "0.1.0"
+edition = "2021"
+authors = ["Mehboob"]
+description = "Priority-based medical appointment scheduling system"
+
+[dependencies]
+chrono = "0.4"
+uuid = { version = "1.0", features = ["v4"] }
+thiserror = "1.0"
+
+[[bin]]
+name = "easyappoint"
+path = "src/main.rs"
