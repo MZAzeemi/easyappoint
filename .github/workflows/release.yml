@@ -38,6 +38,7 @@ jobs:
         run: cargo build --release --target ${{ matrix.target }}
         env:
           RUSTFLAGS: "-C target-feature=-crt-static"
+          # This name MUST be exactly like this to be recognized:
           CARGO_TARGET_AARCH64_UNKNOWN_LINUX_MUSL_LINKER: aarch64-linux-gnu-gcc
           
       - name: Prepare artifacts
