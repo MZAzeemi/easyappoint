@@ -1,1 +1,503 @@
-[PASTE THE ENTIRE EASYAPPOINT HTML HERE]
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EasyAppoint • Smart Medical Scheduling</title>
+    <meta name="description" content="Priority-based appointment scheduling CLI tool for medical practices. Emergency > Urgent > Routine.">
+    <style>
+        /* Modern medical-tech aesthetic */
+        :root {
+            --primary: #0f3d3e;
+            --secondary: #1b7f7a;
+            --accent: #d2f0e9;
+            --dark: #1a1e24;
+            --light: #f5f9fc;
+            --gray: #e2e8f0;
+            --success: #2b7a4b;
+            --warning: #e6b800;
+            --emergency: #c41e3a;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: var(--dark);
+            background: var(--light);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            padding: 6rem 2rem;
+            text-align: center;
+        }
+
+        .hero h1 {
+            font-size: 4rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            letter-spacing: -0.02em;
+        }
+
+        .hero .subhead {
+            font-size: 1.5rem;
+            opacity: 0.95;
+            max-width: 700px;
+            margin: 0 auto 2rem;
+            font-weight: 400;
+        }
+
+        .hero .badge {
+            background: rgba(255,255,255,0.15);
+            backdrop-filter: blur(10px);
+            padding: 0.5rem 1.5rem;
+            border-radius: 100px;
+            display: inline-block;
+            margin-bottom: 2rem;
+            font-weight: 500;
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 1rem 2.5rem;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: transform 0.2s, box-shadow 0.2s;
+            font-size: 1.1rem;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+
+        .btn-primary {
+            background: white;
+            color: var(--primary);
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: white;
+            border: 2px solid white;
+        }
+
+        .btn-outline:hover {
+            background: white;
+            color: var(--primary);
+        }
+
+        /* Features */
+        .features {
+            padding: 5rem 0;
+            background: white;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: var(--dark);
+        }
+
+        .section-subtitle {
+            text-align: center;
+            font-size: 1.25rem;
+            color: #4a5568;
+            max-width: 700px;
+            margin: 0 auto 4rem;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2.5rem;
+        }
+
+        .feature-card {
+            background: var(--light);
+            padding: 2.5rem 2rem;
+            border-radius: 1.5rem;
+            transition: all 0.3s;
+            border: 1px solid var(--gray);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 30px rgba(0,0,0,0.05);
+            border-color: var(--secondary);
+        }
+
+        .feature-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .feature-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--primary);
+        }
+
+        /* Priority Demo */
+        .priority-demo {
+            padding: 5rem 0;
+            background: var(--light);
+        }
+
+        .demo-card {
+            background: white;
+            border-radius: 1.5rem;
+            padding: 3rem;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.05);
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .priority-list {
+            margin: 2rem 0;
+        }
+
+        .priority-item {
+            display: flex;
+            align-items: center;
+            padding: 1rem;
+            border-bottom: 1px solid var(--gray);
+        }
+
+        .priority-tag {
+            padding: 0.25rem 1rem;
+            border-radius: 100px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin-right: 1rem;
+            min-width: 100px;
+            text-align: center;
+        }
+
+        .emergency { background: var(--emergency); color: white; }
+        .urgent { background: var(--warning); color: var(--dark); }
+        .routine { background: var(--accent); color: var(--primary); }
+
+        /* Download Section */
+        .download {
+            padding: 5rem 0;
+            background: white;
+            text-align: center;
+        }
+
+        .download-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            max-width: 900px;
+            margin: 3rem auto;
+        }
+
+        .download-card {
+            background: var(--light);
+            padding: 2rem;
+            border-radius: 1rem;
+            border: 1px solid var(--gray);
+            transition: all 0.2s;
+        }
+
+        .download-card:hover {
+            border-color: var(--secondary);
+            background: white;
+        }
+
+        .download-card h4 {
+            font-size: 1.25rem;
+            margin-bottom: 0.5rem;
+            color: var(--primary);
+        }
+
+        .download-link {
+            display: inline-block;
+            margin-top: 1rem;
+            color: var(--secondary);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .download-link:hover {
+            text-decoration: underline;
+        }
+
+        /* Pricing */
+        .pricing {
+            padding: 5rem 0;
+            background: linear-gradient(135deg, var(--light) 0%, white 100%);
+        }
+
+        .pricing-card {
+            max-width: 400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 2rem;
+            padding: 3rem;
+            text-align: center;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.05);
+            border: 1px solid var(--gray);
+        }
+
+        .price {
+            font-size: 4rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin: 1rem 0;
+        }
+
+        .price small {
+            font-size: 1.25rem;
+            font-weight: 400;
+            color: #718096;
+        }
+
+        .features-list {
+            list-style: none;
+            margin: 2rem 0;
+            text-align: left;
+        }
+
+        .features-list li {
+            padding: 0.5rem 0;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .features-list li::before {
+            content: "✓";
+            color: var(--success);
+            font-weight: bold;
+        }
+
+        .enterprise {
+            margin-top: 3rem;
+            padding: 2rem;
+            background: var(--light);
+            border-radius: 1rem;
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--dark);
+            color: white;
+            padding: 3rem 0;
+            text-align: center;
+        }
+
+        .footer a {
+            color: var(--accent);
+            text-decoration: none;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 2.5rem; }
+            .section-title { font-size: 2rem; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <span class="badge">⚕️ Built with Rust • Open Source</span>
+            <h1>EasyAppoint</h1>
+            <p class="subhead">Smart, priority-based appointment scheduling that puts emergency patients first.</p>
+            <div class="cta-buttons">
+                <a href="#download" class="btn btn-primary">⬇️ Download for Linux</a>
+                <a href="https://github.com/MZAzeemi/easyappoint" class="btn btn-outline" target="_blank">📦 View on GitHub</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features">
+        <div class="container">
+            <h2 class="section-title">Why EasyAppoint?</h2>
+            <p class="section-subtitle">Built for clinics that need intelligent scheduling without the bloat.</p>
+            
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">🎯</div>
+                    <h3>Priority-Based</h3>
+                    <p>Emergency > Urgent > Routine. Critical cases are automatically prioritized, ensuring patients get care when it matters most.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">⚡</div>
+                    <h3>Smart Fallback</h3>
+                    <p>If your preferred slot isn't available, EasyAppoint finds the next best time within your flexibility window.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🕐</div>
+                    <h3>CLI-First</h3>
+                    <p>Fast, lightweight, no bloat. Runs directly in your terminal. Perfect for IT-savvy practices and developers.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🔒</div>
+                    <h3>Private by Design</h3>
+                    <p>No cloud, no data sharing. Your calendar stays on your machine. Full control, zero vendor lock-in.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📊</div>
+                    <h3>Batch Processing</h3>
+                    <p>Process dozens of requests at once. Perfect for morning rushes and high-volume clinics.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🔄</div>
+                    <h3>Easy Rescheduling</h3>
+                    <p>Cancel and reschedule appointments instantly. Time slots are automatically freed and rebooked.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Priority Demo Section -->
+    <section class="priority-demo">
+        <div class="container">
+            <div class="demo-card">
+                <h2 style="color: var(--primary); margin-bottom: 1rem;">⚡ See It In Action</h2>
+                <p style="font-size: 1.2rem; margin-bottom: 2rem;">Same time request. Different priorities. Emergency always wins.</p>
+                
+                <div class="priority-list">
+                    <div class="priority-item">
+                        <span class="priority-tag emergency">EMERGENCY</span>
+                        <span style="flex: 1;">Jane Doe • Severe chest pain</span>
+                        <span style="color: var(--emergency); font-weight: 600;">SCHEDULED</span>
+                    </div>
+                    <div class="priority-item">
+                        <span class="priority-tag urgent">URGENT</span>
+                        <span style="flex: 1;">Bob Wilson • Follow-up on test results</span>
+                        <span style="color: var(--warning); font-weight: 600;">NEXT AVAILABLE</span>
+                    </div>
+                    <div class="priority-item">
+                        <span class="priority-tag routine">ROUTINE</span>
+                        <span style="flex: 1;">John Smith • Annual checkup</span>
+                        <span style="color: #718096;">RESCHEDULED</span>
+                    </div>
+                </div>
+                
+                <p style="margin-top: 2rem; padding: 1rem; background: var(--accent); border-radius: 0.75rem; color: var(--primary);">
+                <strong>✅ Demo included:</strong> Run <code style="background: white; padding: 0.2rem 0.5rem; border-radius: 4px;">easyappoint</code> and select option 8 to see priority scheduling in action.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Download Section -->
+    <section id="download" class="download">
+        <div class="container">
+            <h2 class="section-title">📥 Download EasyAppoint</h2>
+            <p class="section-subtitle">Free. Open source. MIT licensed.</p>
+            
+            <div class="download-grid">
+                <div class="download-card">
+                    <h4>🐧 Linux (x86_64)</h4>
+                    <p>For most Linux distributions</p>
+                    <a href="#" class="download-link">⬇️ easyappoint-linux-amd64</a>
+                </div>
+                <div class="download-card">
+                    <h4>📱 Linux (ARM64)</h4>
+                    <p>For Raspberry Pi, ARM servers</p>
+                    <a href="#" class="download-link">⬇️ easyappoint-linux-arm64</a>
+                </div>
+                <div class="download-card">
+                    <h4>🪟 Windows</h4>
+                    <p>Windows 10/11 (64-bit)</p>
+                    <a href="#" class="download-link">⬇️ easyappoint-windows.exe</a>
+                </div>
+                <div class="download-card">
+                    <h4>🍎 macOS</h4>
+                    <p>Intel & Apple Silicon</p>
+                    <a href="#" class="download-link">⬇️ easyappoint-macos</a>
+                </div>
+            </div>
+            
+            <p style="margin-top: 2rem; color: #4a5568;">
+            ⚡ Binaries are statically linked — no dependencies required. Download and run.
+            </p>
+        </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section class="pricing">
+        <div class="container">
+            <h2 class="section-title">💰 Pricing</h2>
+            <p class="section-subtitle">Simple, transparent, and fair.</p>
+            
+            <div class="pricing-card">
+                <h3 style="color: var(--primary);">Open Source</h3>
+                <div class="price">€0 <small>forever</small></div>
+                <p style="color: #4a5568;">For individual practitioners and clinics</p>
+                
+                <ul class="features-list">
+                    <li>Full CLI functionality</li>
+                    <li>Priority scheduling engine</li>
+                    <li>Unlimited appointments</li>
+                    <li>No cloud, no tracking</li>
+                    <li>MIT license</li>
+                </ul>
+                
+                <a href="https://github.com/MZAzeemi/easyappoint" class="btn btn-primary" style="background: var(--primary); color: white; width: 100%;">View Source</a>
+                
+                <div class="enterprise">
+                    <h4 style="color: var(--primary); margin-bottom: 0.5rem;">🏢 Enterprise</h4>
+                    <p style="margin-bottom: 1rem;">Custom features, priority support, on-prem deployment.</p>
+                    <a href="#" style="color: var(--secondary); font-weight: 600; text-decoration: none;">Contact →</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <h3 style="font-size: 1.75rem; margin-bottom: 1rem;">EasyAppoint</h3>
+            <p style="margin-bottom: 2rem; opacity: 0.9;">Built with Rust for the GBAC program at THD.</p>
+            
+            <div style="display: flex; justify-content: center; gap: 2rem; flex-wrap: wrap; margin-bottom: 2rem;">
+                <a href="https://github.com/MZAzeemi/easyappoint">GitHub</a>
+                <a href="#">Documentation</a>
+                <a href="#">Releases</a>
+                <a href="#">Report Issue</a>
+            </div>
+            
+            <p style="opacity: 0.7; font-size: 0.9rem;">
+                © 2025 MZAzeemi. MIT Licensed.<br>
+                University Project • THD • 24W-GBAC
+            </p>
+        </div>
+    </footer>
+</body>
+</html>
