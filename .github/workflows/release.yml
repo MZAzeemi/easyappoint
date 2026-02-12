@@ -4,128 +4,31 @@ on:
   push:
     tags:
       - 'v*'
-  workflow_dispatch:
-
-permissions:
-  contents: write
 
 jobs:
-  build-linux:
-    name: Linux (${{ matrix.target }})
+  build:
     runs-on: ubuntu-latest
     strategy:
       matrix:
         target:
           - x86_64-unknown-linux-musl
           - aarch64-unknown-linux-musl
+
+    env:
+      BINARY_NAME: easyappoint
+
     steps:
       - uses: actions/checkout@v4
-      
-      - name: Install Rust
-        uses: dtolnay/rust-toolchain@stable
+      - uses: dtolnay/rust-toolchain@stable
+      - run: cargo install cross
+      - run: rustup target add ${{ matrix.target }}
+      - run: cross build --target ${{ matrix.target }} --release
+      - run: |
+          mkdir -p release
+          cp target/${{ matrix.target }}/release/$BINARY_NAME release/
+          tar -czvf ${{ matrix.target }}.tar.gz -C release $BINARY_NAME
+      - uses: softprops/action-gh-release@v2
         with:
-          target: ${{ matrix.target }}
-          
-      - name: Install cross-compilation tools
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y musl-tools
-          if [ "${{ matrix.target }}" = "aarch64-unknown-linux-musl" ]; then
-            sudo apt-get install -y gcc-aarch64-linux-gnu
-          fi
-          
-      - name: Build
-        run: cargo build --release --target ${{ matrix.target }}
+          files: "*.tar.gz"
         env:
-          RUSTFLAGS: "-C target-feature=-crt-static"
-          # This name MUST be exactly like this to be recognized:
-          CARGO_TARGET_AARCH64_UNKNOWN_LINUX_MUSL_LINKER: aarch64-linux-gnu-gcc
-          
-      - name: Prepare artifacts
-        run: |
-          mkdir -p artifacts
-          # Look for the binary under both potential names
-          BINARY_NAME=$(find target/${{ matrix.target }}/release -maxdepth 1 -type f -executable ! -name "*.d" | head -n 1)
-          cp "$BINARY_NAME" artifacts/easyappoint-linux-${{ matrix.target }}
-          
-      - name: Upload artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: easyappoint-${{ matrix.target }}
-          path: artifacts/*
-          
-  build-windows:
-    name: Windows (x86_64)
-    runs-on: windows-latest
-    steps:
-      - uses: actions/checkout@v4
-      
-      - name: Install Rust
-        uses: dtolnay/rust-toolchain@stable
-        with:
-          target: x86_64-pc-windows-gnu
-          
-      - name: Build
-        run: cargo build --release --target x86_64-pc-windows-gnu
-        
-      - name: Prepare artifacts
-        run: |
-          mkdir artifacts
-          if (Test-Path "target/x86_64-pc-windows-gnu/release/easyappoint.exe") {
-            Copy-Item "target/x86_64-pc-windows-gnu/release/easyappoint.exe" -Destination "artifacts/easyappoint-windows-x86_64.exe"
-          } else {
-            Copy-Item "target/x86_64-pc-windows-gnu/release/appointment-scheduler.exe" -Destination "artifacts/easyappoint-windows-x86_64.exe"
-          }
-        shell: pwsh
-        
-      - name: Upload artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: easyappoint-windows
-          path: artifacts/*
-          
-  build-macos:
-    name: macOS (x86_64)
-    runs-on: macos-latest
-    steps:
-      - uses: actions/checkout@v4
-      
-      - name: Install Rust
-        uses: dtolnay/rust-toolchain@stable
-        with:
-          target: x86_64-apple-darwin
-          
-      - name: Build
-        run: cargo build --release --target x86_64-apple-darwin
-        
-      - name: Prepare artifacts
-        run: |
-          mkdir -p artifacts
-          if [ -f "target/x86_64-apple-darwin/release/easyappoint" ]; then
-            cp target/x86_64-apple-darwin/release/easyappoint artifacts/easyappoint-macos-x86_64
-          else
-            cp target/x86_64-apple-darwin/release/appointment-scheduler artifacts/easyappoint-macos-x86_64
-          fi
-          
-      - name: Upload artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: easyappoint-macos
-          path: artifacts/*
-          
-  release:
-    name: Create Release
-    needs: [build-linux, build-windows, build-macos]
-    runs-on: ubuntu-latest
-    if: startsWith(github.ref, 'refs/tags/')
-    steps:
-      - name: Download all artifacts
-        uses: actions/download-artifact@v4
-        with:
-          path: artifacts
-          
-      - name: Create Release
-        uses: softprops/action-gh-release@v2
-        with:
-          files: artifacts/**/*
-          generate_release_notes: true
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
